@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./User');
 
 router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
   let user = await User.findOne({ email });
   if (user) {
@@ -18,6 +18,7 @@ router.post('/register', async (req, res) => {
     name,
     email,
     password: hash,
+    role,
   });
 
   await user.save();
@@ -42,6 +43,7 @@ router.post('/login', async (req, res) => {
       _id: user.id,
       name: user.name,
       email: user.email,
+      role: user.role,
     },
     'JWT_STRONG_SECRET',
     { expiresIn: '2h' }

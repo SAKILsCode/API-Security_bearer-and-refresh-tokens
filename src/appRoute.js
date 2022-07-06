@@ -1,13 +1,20 @@
 const router = require('express').Router();
-const passport = require('passport');
-// const authenticate = require('./authenticate');
+const authenticate = require('./authenticate');
+const authorize = require('./authorize');
 
-router.get('/public', (req, res) => {
-  res.status(200).json({ message: 'I am public route' });
-});
+router.get(
+  '/public',
+  authenticate,
+  authorize(['user', 'admin']),
+  (req, res) => {
+    res.status(200).json({ message: 'I am public route', user: req.user });
+  }
+);
+
 router.get(
   '/protected',
-  passport.authenticate('bearer', { session: false }),
+  authenticate,
+  authorize(['admin']),
   (req, res) => {
     res.status(200).json({ message: 'I am protected route', user: req.user });
   }
