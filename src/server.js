@@ -3,6 +3,8 @@ const cors = require('cors');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 
+require('./authenticate ps')
+
 const app = express();
 app.use([cors(), morgan('dev'), express.json()]);
 
