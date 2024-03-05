@@ -2,11 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const requestIp = require('request-ip');
 
 const app = express();
-app.use([cors(), morgan('dev'), express.json()]);
+app.use([cors(), morgan('dev'), express.json(), requestIp.mw()]);
 
 app.use('/auth', require('./authRoute'));
+app.use('/tokens', require('./rtRouter'));
 app.use('/', require('./appRoute'));
 
 app.use('/health', (_req, res) => {

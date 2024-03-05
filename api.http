@@ -43,4 +43,27 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MmM1ODA5N
 ###
 
 
-GET http://localhost:4000/protected
+GET http://localhost:4000/tokens/refresh
+Content-Type: application/json
+
+{
+  "token": "....."
+}
+###
+
+
+GET http://localhost:4000/tokens/revoke
+Content-Type: application/json
+
+{
+  "token": "....."
+}
+###
+
+
+GET http://localhost:4000/tokens/valid
+Content-Type: application/json
+
+{
+  "token": "....."
+}

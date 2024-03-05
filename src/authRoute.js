@@ -1,7 +1,9 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { addDays } = require('date-fns');
 const User = require('./User');
+const RefreshToken = require('./RefreshToken');
 
 router.post('/register', async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -38,6 +40,7 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ message: 'Invalid password' });
   }
 
+  // Access token
   const token = jwt.sign(
     {
       _id: user.id,
@@ -49,7 +52,30 @@ router.post('/login', async (req, res) => {
     { expiresIn: '2h' }
   );
 
-  res.status(200).json(token);
+  // Refresh token DB object
+  const refreshToken = new RefreshToken({
+    user: user.id,
+    issuedIp: req.clientIp || 'N/A',
+    token: '',
+    expiredAt: addDays(new Date(), 30),
+  });
+
+  // Refresh token string
+  const rToken = jwt.sign(
+    {
+      _id: refreshToken.id,
+      user: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+    'JWT_STRONG_SECRET'
+  );
+
+  refreshToken.token = rToken;
+  await refreshToken.save();
+
+  res.status(200).json({ accessToken: token, refreshToken: rToken });
 });
 
 module.exports = router;
